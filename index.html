@@ -1,41 +1,154 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-    <meta name="theme-color" content="#000000" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+</head>
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+<body onkeydown="muda(window.event?event.keyCode:event.which);" onkeyup="if((window.event?event.keyCode:event.which)==17)ctr=false;" style='background-color: #444444;'>
+    
+        <table width="700" align="center" height="100%" cellpadding="0" cellspacing="0">
+            <tr>
+                <td align="center">
+                    <br>
+                    <br>
+                    <br>
+                    <canvas id="canvas" width="360" height="360"></canvas>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" height="30" style='background-color: #dadada; border-radius: 10px; height: 42px;'><b>Segure a tecla CTRL e pressione as teclas direcionais ...</b> <a style='color: #0000ff; cursor: pointer;' onclick="for(x=0;x<7;x++)rotacao(Math.random()>.5?'coluna':'linha',parseInt(Math.random()*3)+1,Math.random()>.5); angulo();">Clique aqui para embralhar um pouco</a></td>
+            </tr>
+        </table>
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-  </body>
+    
+</body>
+<script>
+    pv = 1;
+    sel = 5;
+    ctr = false;
+    ctx = document.getElementById("canvas").getContext("2d");
+    relaciona = ['', 13, 25, 37, 14, 26, 38, 15, 27, 39];
+    configuracao = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5];
+    rotacao = function (sentido, x, direcao) {
+        if (sentido == "coluna") {
+            switch (x) {
+                case 1: x = [[13, 46, 45, 1], [25, 49, 33, 4], [37, 52, 21, 7], [12, 36, 34, 10], [24, 35, 22, 11]]; break;
+                case 2: x = [[14, 47, 44, 2], [26, 50, 32, 5], [38, 53, 20, 8]]; break;
+                case 3: x = [[15, 48, 43, 3], [27, 51, 31, 6], [39, 54, 19, 9], [16, 40, 42, 18], [28, 41, 30, 17]]; break;
+            }
+        }
+        if (sentido == "linha") {
+            switch (x) {
+                case 1: x = [[10, 13, 16, 19], [11, 14, 17, 20], [12, 15, 18, 21], [7, 9, 3, 1], [8, 6, 2, 4]]; break;
+                case 2: x = [[22, 25, 28, 31], [23, 26, 29, 32], [24, 27, 30, 33]]; break;
+                case 3: x = [[34, 37, 40, 43], [35, 38, 41, 44], [36, 39, 42, 45], [46, 48, 54, 52], [47, 51, 53, 49]]; break;
+            }
+        }
+        for (a = 0; a < x.length; a++) {
+            if (!direcao) x[a] = x[a].reverse();
+            aux = configuracao[x[a][0] - 1];
+            for (var b = 0; b < 3; b++) configuracao[x[a][b] - 1] = configuracao[x[a][b + 1] - 1];
+            configuracao[x[a][3] - 1] = aux;
+        }
+    }
+    desenhaladrilho = function (s, c, a) {
+        ctx.beginPath();
+        cores = ['', [187, 187, 187], [170, 85, 85], [85, 170, 85], [85, 85, 170], [34, 187, 187], [200, 200, 20]];
+        ctx.fillStyle = "rgb(" + cores[c][0] + "," + cores[c][1] + "," + cores[c][2] + ")";
+        ctx.moveTo(a[0][0], a[0][1]);
+        ctx.lineTo(a[1][0], a[1][1]);
+        ctx.lineTo(a[2][0], a[2][1]);
+        ctx.lineTo(a[3][0], a[3][1]);
+        ctx.lineTo(a[0][0], a[0][1]);
+        ctx.lineTo(a[1][0], a[1][1]);
+        ctx.fill();
+        ctx.strokeStyle = "rgb(255,255,255)";
+        if (s) ctx.strokeStyle = "rgb(255,25,25)";
+        else ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.closePath();
+    }
+    terco = function (a, b) { return [a[0] + (b[0] - a[0]) / 3, a[1] + (b[1] - a[1]) / 3]; };
+    dividepornove = function (x) {
+        var pts = [x[0], terco(x[0], x[1]), terco(x[1], x[0]), x[1], terco(x[0], x[3]), terco(x[0], x[2]), terco(x[1], x[3]), terco(x[1], x[2]), terco(x[3], x[0]), terco(x[3], x[1]), terco(x[2], x[0]), terco(x[2], x[1]), x[3], terco(x[3], x[2]), terco(x[2], x[3]), x[2]];
+        return [[pts[0], pts[1], pts[5], pts[4]], [pts[1], pts[2], pts[6], pts[5]], [pts[2], pts[3], pts[7], pts[6]], [pts[4], pts[5], pts[9], pts[8]], [pts[5], pts[6], pts[10], pts[9]], [pts[6], pts[7], pts[11], pts[10]], [pts[8], pts[9], pts[13], pts[12]], [pts[9], pts[10], pts[14], pts[13]], [pts[10], pts[11], pts[15], pts[14]]];
+    };
+    angulo = function () {
+        switch (pv) {
+            case 0: a = [[[120, 120], [120, 360], [360, 360], [360, 120]], [[0, 0], [240, 0], [360, 120], [120, 120]], [[0, 0], [120, 120], [120, 360], [0, 240]]]; break;
+            case 1: a = [[[0, 120], [0, 360], [240, 360], [240, 120]], [[360, 0], [120, 0], [0, 120], [240, 120]], [[360, 0], [240, 120], [240, 360], [360, 240]]]; break;
+            case 2: a = [[[120, 0], [120, 240], [360, 240], [360, 0]], [[0, 360], [240, 360], [360, 240], [120, 240]], [[0, 360], [120, 240], [120, 0], [0, 120]]]; break;
+            case 3: a = [[[0, 0], [0, 240], [240, 240], [240, 0]], [[360, 360], [120, 360], [0, 240], [240, 240]], [[360, 360], [240, 240], [240, 0], [360, 120]]]; break;
+        }
+        ladsfaceprincipal = dividepornove(a[0]);
+        ladsfacelateral1 = dividepornove(a[1]);
+        ladsfacelateral2 = dividepornove(a[2]);
+
+        faceprincipal = [13, 25, 37, 14, 26, 38, 15, 27, 39];
+        facecima = (pv == 1 ? [3, 2, 1, 6, 5, 4, 9, 8, 7] : [1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        facebaixo = (pv == 3 ? [54, 53, 52, 51, 50, 49, 48, 47, 46] : [52, 53, 54, 49, 50, 51, 46, 47, 48]);
+        faceesq = (pv == 2 ? [34, 35, 36, 22, 23, 24, 10, 11, 12] : [10, 11, 12, 22, 23, 24, 34, 35, 36]);
+        facedir = (pv == 1 ? [18, 17, 16, 30, 29, 28, 42, 41, 40] : [42, 41, 40, 30, 29, 28, 18, 17, 16]);
+
+        for (x = 0; x < 9; x++) desenhaladrilho(false, configuracao[faceprincipal[x] - 1] + 1, ladsfaceprincipal[x]);	//face principal
+        desenhaladrilho(true, configuracao[faceprincipal[sel - 1] - 1] + 1, ladsfaceprincipal[sel - 1]);			//ladrilho selecionado
+        for (x = 0; x < 9; x++) desenhaladrilho(false, configuracao[(pv == 0 || pv == 1 ? facecima : facebaixo)[x] - 1] + 1, ladsfacelateral1[x]);	// face secundaria vertical
+        for (x = 0; x < 9; x++) desenhaladrilho(false, configuracao[(pv == 0 || pv == 2 ? faceesq : facedir)[x] - 1] + 1, ladsfacelateral2[x]);		// face secundaria horizontal
+    }
+    muda = function (x) {
+        if (x == 17) ctr = true;
+        else if (ctr) {
+            if (x == 37 || x == 39) rotacao("linha", (sel % 3 || 3), x == 37);
+            else if (x == 38 || x == 40) rotacao("coluna", parseInt((sel - 1) / 3) + 1, x == 38);
+        }
+        if (!ctr && (x > 36 && x < 41)) switch (x) {
+            case 37:
+                if (sel == 1 || sel == 2 || sel == 3) {
+                    ns = [1, 0, 3, 2];
+                    pv = ns[pv];
+                    if (pv != 0 && pv != 2) for (x = 1; x < 4; x++) rotacao("linha", x, false); else x = false;
+                }
+                ns = ['', 7, 8, 9, 1, 2, 3, 4, 5, 6];
+                if (x) sel = ns[sel];
+                break;
+            case 38:
+                if (sel == 1 || sel == 4 || sel == 7) {
+                    ns = [2, 3, 0, 1];
+                    pv = ns[pv];
+                    if (pv != 0 && pv != 1) for (x = 1; x < 4; x++) rotacao("coluna", x, false); else x = false;
+                }
+                ns = ['', 3, 1, 2, 6, 4, 5, 9, 7, 8];
+                if (x) sel = ns[sel];
+                break;
+            case 39:
+                if (sel == 7 || sel == 8 || sel == 9) {
+                    ns = [1, 0, 3, 2];
+                    pv = ns[pv];
+                    if (pv != 1 && pv != 2) for (x = 1; x < 4; x++) rotacao("linha", x, true); else x = false;
+                }
+                ns = ['', 4, 5, 6, 7, 8, 9, 1, 2, 3];
+                if (x) sel = ns[sel];
+                break;
+            case 40:
+                if (sel == 3 || sel == 6 || sel == 9) {
+                    ns = [2, 3, 0, 1];
+                    pv = ns[pv];
+                    if (pv != 2 && pv != 3) for (x = 1; x < 4; x++) rotacao("coluna", x, true); else x = false;
+                }
+                ns = ['', 2, 3, 1, 5, 6, 4, 8, 9, 7];
+                if (x) sel = ns[sel];
+                break;
+        }
+        ctx.clearRect(0, 0, 360, 360);
+        angulo();
+    }
+    angulo();
+</script>
+
 </html>
